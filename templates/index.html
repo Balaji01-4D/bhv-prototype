@@ -3,49 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Image</title>
+    <title>Upload Image - Alaska</title>
     <!-- Include HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.5rem; }
-        textarea { width: 100%; height: 100px; }
-        #result { margin-top: 2rem; padding: 1rem; border: 1px solid #ccc; border-radius: 4px; min-height: 50px;}
-        .error { color: red; }
-        .success { color: green; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            max-width: 480px; 
+            margin: 4rem auto; 
+            background-color: #f7f7f7;
+            color: #222;
+            padding: 0 1.5rem;
+        }
+        .container {
+            background: white;
+            padding: 2.5rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        .logo {
+            width: 80px;
+            margin-bottom: 1.5rem;
+        }
+        h1 {
+            font-size: 1.35rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            color: #111;
+        }
+        .form-group { 
+            margin-bottom: 1.5rem; 
+            text-align: left;
+        }
+        label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #444;
+        }
+        input[type="file"], textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: inherit;
+            background-color: #fafafa;
+            transition: border-color 0.2s;
+        }
+        input[type="file"]:focus, textarea:focus {
+            outline: none;
+            border-color: #000;
+        }
+        textarea { 
+            height: 100px; 
+            resize: vertical;
+        }
+        button {
+            background-color: #111;
+            color: #fff;
+            border: none;
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: #333; }
+        #result { 
+            margin-top: 1.5rem; 
+        }
+        .error { color: #d32f2f; background: #ffebee; padding: 1rem; border-radius: 8px; text-align: left; font-size: 0.9rem; line-height: 1.4;}
+        .success { color: #1b5e20; background: #e8f5e9; padding: 1rem; border-radius: 8px; text-align: left; font-size: 0.9rem; line-height: 1.5;}
+        .success p { margin: 0 0 0.5rem 0; }
+        .success p:last-child { margin: 0; }
+        .success a { color: #1976d2; text-decoration: none; font-weight: 500; }
+        .success a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <h1>Upload Image and Narrative</h1>
-    
-    <form hx-post="/images" hx-target="#result" hx-encoding="multipart/form-data">
-        <div class="form-group">
-            <label for="file">Image:</label>
-            <input type="file" id="file" name="file" accept="image/*" required>
-        </div>
+    <div class="container">
+        <img src="/assets/Alaska.png" alt="Alaska Logo" class="logo">
         
-        <div class="form-group">
-            <label for="narrative">Narrative:</label>
-            <textarea id="narrative" name="narrative" required></textarea>
+        <h1>Upload Image</h1>
+        
+        <form hx-post="/images" hx-target="#result" hx-encoding="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Image File</label>
+                <input type="file" id="file" name="file" accept="image/*" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="narrative">Narrative</label>
+                <textarea id="narrative" name="narrative" required placeholder="What is the story behind this image?"></textarea>
+            </div>
+
+            <button type="submit">Post Image</button>
+        </form>
+
+        <div id="result">
         </div>
-
-        <button type="submit">Post Image</button>
-    </form>
-
-    <div id="result">
     </div>
 
     <script>
-        document.body.addEventListener('htmx:responseError', function(evt) {
+        document.body.addEventListener("htmx:responseError", function(evt) {
             const xhr = evt.detail.xhr;
-            const target = document.getElementById('result');
+            const target = document.getElementById("result");
             try {
                 const response = JSON.parse(xhr.responseText);
-                target.innerHTML = `<div class="error"><strong>Upload Failed:</strong> ${response.detail}</div>`;
+                target.innerHTML = `<div class="error"><strong>Upload Failed:</strong><br>${response.detail}</div>`;
             } catch (e) {
                 target.innerHTML = `<div class="error"><strong>An unexpected error occurred.</strong></div>`;
             }
+        });
+
+        document.body.addEventListener("htmx:beforeRequest", function(evt) {
+            document.getElementById("result").innerHTML = `<div style="color:#666; font-size:0.9rem; margin-top:1rem;">Uploading to GitHub... please wait.</div>`;
         });
     </script>
 </body>
