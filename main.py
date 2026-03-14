@@ -33,10 +33,11 @@ async def upload_image(request: Request, file: UploadFile = File(...), narrative
         content = await file.read()
         path = f"images/{file.filename}"
         result = repo.create_file(path, f"Add image {file.filename}", content, branch="main")
-        repo.create_file(path + ".txt", f"Add narrative for {file.filename}", narrative.encode(), branch="main")
+        narrative_result = repo.create_file(path + ".txt", f"Add narrative for {file.filename}", narrative.encode(), branch="main")
 
         image_url = result["content"].html_url
-        return templates.TemplateResponse("success.html", {"request": request, "image_url": image_url})
+        narrative_url = narrative_result["content"].html_url
+        return templates.TemplateResponse("success.html", {"request": request, "image_url": image_url, "narrative_url": narrative_url})
     except GithubException as e:
         raise HTTPException(status_code=500, detail=f"GitHub error: {e.data}")
     except Exception as e:
