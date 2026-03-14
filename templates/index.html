@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <!-- Include HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; }
+        textarea { width: 100%; height: 100px; }
+        #result { margin-top: 2rem; padding: 1rem; border: 1px solid #ccc; border-radius: 4px; min-height: 50px;}
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Upload Image and Narrative</h1>
+    
+    <form hx-post="/images" hx-target="#result" hx-encoding="multipart/form-data">
+        <div class="form-group">
+            <label for="file">Image:</label>
+            <input type="file" id="file" name="file" accept="image/*" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="narrative">Narrative:</label>
+            <textarea id="narrative" name="narrative" required></textarea>
+        </div>
+
+        <button type="submit">Post Image</button>
+    </form>
+
+    <div id="result">
+    </div>
+
+    <script>
+        document.body.addEventListener('htmx:responseError', function(evt) {
+            const xhr = evt.detail.xhr;
+            const target = document.getElementById('result');
+            try {
+                const response = JSON.parse(xhr.responseText);
+                target.innerHTML = `<div class="error"><strong>Upload Failed:</strong> ${response.detail}</div>`;
+            } catch (e) {
+                target.innerHTML = `<div class="error"><strong>An unexpected error occurred.</strong></div>`;
+            }
+        });
+    </script>
+</body>
+</html>
