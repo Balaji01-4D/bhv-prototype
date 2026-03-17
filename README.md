@@ -1,1 +1,1 @@
-this is prototype for the Behavioral Health Vault project, it only adds the image and narrative to this github repository at `\images` folder, narratives are found in the particular is found at `image_name` + .txt in the `\images`.
+Bhv-prototype is prototype for the Behavioral Health Vault project, it only adds the image and narrative to this github repository at `\images` folder, narratives are found in the particular is found at `image_name` + .txt in the `\images`.
